@@ -26,6 +26,7 @@ export default function HomePage() {
 
     return (
         <Box className='join-box'>
+            <h1>Welcome to the Home Page</h1>
             <TextField
                 id="outlined-basic"
                 label="Email"
