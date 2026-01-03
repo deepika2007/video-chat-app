@@ -8,7 +8,6 @@ function App() {
   return (
     <SocketProvider>
       <Box className="app-container">
-        <h1>Welcome to the Home Page</h1>
         <Box>
           <Routes>
             <Route path="/" element={<HomePage />} />
