@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/home.tsx";
 import { Box } from "@mui/material";
-
 import { SocketProvider } from './providers/SocketProvider.tsx';
+import RoomPage from "./pages/Room.tsx";
+import HomePage from "./pages/Home.tsx";
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
         <Box>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<h1>About Page</h1>} />
+            <Route path="/room/:roomId" element={<RoomPage />} />
           </Routes>
         </Box>
       </Box>

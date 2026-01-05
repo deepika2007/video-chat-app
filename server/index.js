@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const emailToSocketMapping = new Map();
+const socketToEmailMapping = new Map();
 
 io.on('connection', (socket) => {
     console.log('A user connected');
@@ -16,10 +17,13 @@ io.on('connection', (socket) => {
     socket.on('join room', (data) => {
         const { emailId, roomId } = data;
         emailToSocketMapping.set(emailId, socket.id);
-        socket.join(roomId);
+        socketToEmailMapping.set(socket.id, emailId);
 
-        socket.emit('joined room', { roomId });
-        socket.broadcast.to(roomId).emit('user joined', { emailId });
+        socket.join(roomId);
+        io.to(roomId).emit('user-joined', { emailId , id: socket.id});
+
+        // socket.emit('joined room', { roomId });
+        io.to(roomId).emit('join room', { emailId });
         console.log(`${emailId} joined room: ${roomId}`);
     });
 
