@@ -20,10 +20,10 @@ io.on('connection', (socket) => {
         socketToEmailMapping.set(socket.id, emailId);
 
         socket.join(roomId);
-        io.to(roomId).emit('user-joined', { emailId , id: socket.id});
+        io.to(roomId).emit('user-joined', { emailId, roomId });
 
         // socket.emit('joined room', { roomId });
-        io.to(roomId).emit('join room', { emailId });
+        io.to(roomId).emit('join room', { emailId, roomId });
         console.log(`${emailId} joined room: ${roomId}`);
     });
 
