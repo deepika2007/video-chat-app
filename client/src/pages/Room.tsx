@@ -15,7 +15,7 @@ const RoomPage = () => {
         setRemoteSocketId(id);
     }
     useEffect(() => {
-        socket?.on('user-joined', handleNewUserJoined)
+        socket?.on('user-joined', handleNewUserJoined) 
         return () => {
             socket?.off('user-joined', handleNewUserJoined)
         }
