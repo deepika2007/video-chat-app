@@ -3,10 +3,6 @@ const bodyParser = require('body-parser');
 const { Server } = require('socket.io');
 
 const io = new Server({ cors: true });
-const app = express();
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 const emailToSocketMapping = new Map();
 const socketToEmailMapping = new Map();
@@ -27,10 +23,13 @@ io.on('connection', (socket) => {
         console.log(`${emailId} joined room: ${roomId}`);
     });
 
-    // socket.on('disconnect', () => {
-    //     console.log('A user disconnected');
-    // });
+    socket.on('call-user', ({ to, offer }) => {
+        io.to(to).emit('incoming:call', { from: socket.id, offer });
+    })
+
+    socket.on('call-accepted', ({ to, ans }) => {
+        io.to(to).emit('call-accepted', { ans, from: socket.id });
+    })
 });
 
-app.listen(3000, () => console.log('Server is running on http://localhost:3000'));
 io.listen(3001, () => console.log('Socket.IO server is running on http://localhost:3001'));
