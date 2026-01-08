@@ -1,5 +1,5 @@
 class PeerService {
-    private peer: any;
+    public peer: any;
 
     constructor() {
         if (!this.peer) {

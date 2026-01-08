@@ -1,62 +1,66 @@
-import { Box, Button, TextField } from '@mui/material';
-import { useSocket } from '../providers/SocketProvider';
-import React, { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Box, Button, TextField } from "@mui/material";
+import { useSocket } from "../providers/SocketProvider";
+import { useNavigate } from "react-router-dom";
+import { useCallback, useState } from "react";
 
 export default function HomePage() {
     const socket = useSocket();
     const navigate = useNavigate();
-    const [roomInfo, setRoomInfo] = React.useState<{ roomId: string; emailId: string } | null>(null);
 
-    const handleJoinedRoom = useCallback(({ emailId, roomId }: { emailId: string, roomId: string }) => {
-        navigate(`/room/${roomId}`);
-        console.log('Joined room successfully', { emailId, roomId });
-    }, []);
+    const [roomInfo, setRoomInfo] = useState({
+        roomId: "",
+        emailId: "",
+    });
 
-    useEffect(() => {
-        socket?.on('join room', handleJoinedRoom);
-        return () => {
-            socket?.off('join room', handleJoinedRoom);
-        }
-    }, []);
+    const handleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const { name, value } = e.target;
+            setRoomInfo(prev => ({
+                ...prev,
+                [name]: value,
+            }));
+        },
+        []
+    );
 
-    const handleChange = (e: React.FormEvent) => {
-        const { name, value } = e.target as HTMLInputElement;
-        setRoomInfo((prev: any) => ({
-            ...prev,
-            [name]: value,
-        }));
-    }
+    const handleJoin = useCallback(() => {
+        if (!socket) return;
+        if (!roomInfo.roomId || !roomInfo.emailId) return;
 
-    const handleJoin = () => {
-        if (!socket || !roomInfo) return;
+        socket.emit("join-room", roomInfo);
 
-        socket.emit('join room', {
-            emailId: roomInfo.emailId,
-            roomId: roomInfo.roomId,
-        });
-    }
+        // ✅ Navigate immediately
+        navigate(`/room/${roomInfo.roomId}`);
+    }, [socket, roomInfo, navigate]);
 
     return (
-        <Box className='join-box'>
-            <h1>Welcome to the Home Page</h1>
+        <Box className="join-box">
+            <h1>Join Room</h1>
+
             <TextField
-                id="outlined-basic"
                 label="Email"
-                variant="outlined"
-                name={'emailId'}
-                value={roomInfo?.emailId || ''}
-                onChange={(e) => handleChange(e)}
+                name="emailId"
+                value={roomInfo.emailId}
+                onChange={handleChange}
+                fullWidth
             />
+
             <TextField
-                id="outlined-basic"
                 label="Room ID"
-                variant="outlined"
-                name={'roomId'}
-                value={roomInfo?.roomId || ''}
-                onChange={(e) => handleChange(e)}
+                name="roomId"
+                value={roomInfo.roomId}
+                onChange={handleChange}
+                fullWidth
+                sx={{ mt: 2 }}
             />
-            <Button variant="contained" onClick={handleJoin}>Join</Button>
+
+            <Button
+                variant="contained"
+                onClick={handleJoin}
+                sx={{ mt: 2 }}
+            >
+                Join
+            </Button>
         </Box>
     );
 }
